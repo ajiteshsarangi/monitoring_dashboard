@@ -1,9 +1,0 @@
-{
-  "/_not-found/page": "/_not-found",
-  "/alerts/page": "/alerts",
-  "/linux/page": "/linux",
-  "/logs/page": "/logs",
-  "/nodes/page": "/nodes",
-  "/dashboard/page": "/dashboard",
-  "/page": "/"
-}

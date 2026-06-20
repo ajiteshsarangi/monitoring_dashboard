@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
+import { TelemetryProvider } from './TelemetryContext';
 import '../src/index.css';
 import { Sidebar } from '../src/components/Sidebar';
 import { Header } from '../src/components/Header';
@@ -238,7 +239,9 @@ export default function RootLayout({ children }) {
               setIsCustomizerOpen={setIsCustomizerOpen}
             />
             <div className="content-body">
-              {React.cloneElement(children, childProps)}
+              <TelemetryProvider value={childProps}>
+                {children}
+              </TelemetryProvider>
             </div>
           </main>
 

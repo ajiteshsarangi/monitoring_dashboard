@@ -1,7 +1,9 @@
 'use client';
 
+import { useTelemetry } from '../TelemetryContext';
 import { NodeFleetTab } from '../../src/components/NodeFleetTab';
 
-export default function Page(props) {
-  return <NodeFleetTab {...props} />;
+export default function Page() {
+  const telemetryProps = useTelemetry();
+  return <NodeFleetTab {...telemetryProps} />;
 }
