@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { CloseIcon } from './Icons';
 
 /**
@@ -96,7 +96,8 @@ export const Modal = ({ isOpen, onClose, title, children, footer }) => {
  * 5. Toggle Switch Component
  */
 export const Toggle = ({ label, checked, onChange, id }) => {
-  const toggleId = id || `toggle-${Math.random().toString(36).substr(2, 9)}`;
+  const reactId = useId();
+  const toggleId = id || reactId;
   return (
     <div className="customizer-option">
       <span>{label}</span>

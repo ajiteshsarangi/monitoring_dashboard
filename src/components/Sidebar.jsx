@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import {
   DashboardIcon,
   ServerIcon,
@@ -9,7 +10,6 @@ import {
 
 export const Sidebar = ({
   activeTab,
-  setActiveTab,
   isSidebarCollapsed,
   serversCount,
   hasDangerAlerts
@@ -23,49 +23,49 @@ export const Sidebar = ({
       
       <ul className="sidebar-nav">
         <li>
-          <div 
+          <Link 
+            href="/dashboard"
             className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
-            onClick={() => setActiveTab('dashboard')}
           >
             <DashboardIcon />
             <span className="nav-text">Dashboard</span>
-          </div>
+          </Link>
         </li>
         <li>
-          <div 
+          <Link 
+            href="/nodes"
             className={`nav-item ${activeTab === 'nodes' ? 'active' : ''}`}
-            onClick={() => setActiveTab('nodes')}
           >
             <CpuIcon />
             <span className="nav-text">Node Fleet ({serversCount})</span>
-          </div>
+          </Link>
         </li>
         <li>
-          <div 
+          <Link 
+            href="/linux"
             className={`nav-item ${activeTab === 'linux' ? 'active' : ''}`}
-            onClick={() => setActiveTab('linux')}
           >
             <ServerIcon />
             <span className="nav-text">Linux Fleet (4)</span>
-          </div>
+          </Link>
         </li>
         <li>
-          <div 
+          <Link 
+            href="/logs"
             className={`nav-item ${activeTab === 'logs' ? 'active' : ''}`}
-            onClick={() => setActiveTab('logs')}
           >
             <ActivityIcon />
             <span className="nav-text">Log Explorer</span>
-          </div>
+          </Link>
         </li>
         <li>
-          <div 
+          <Link 
+            href="/alerts"
             className={`nav-item ${activeTab === 'alerts' ? 'active' : ''}`}
-            onClick={() => setActiveTab('alerts')}
           >
             <BellIcon dot={hasDangerAlerts} />
             <span className="nav-text">Alert Logs</span>
-          </div>
+          </Link>
         </li>
       </ul>
 
