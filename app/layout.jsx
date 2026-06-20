@@ -25,8 +25,8 @@ export default function RootLayout({ children }) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
   
-  // Theme & FontSize state with localStorage support
-  const [theme, setTheme] = useState('dark');
+  // Theme & FontSize state with localStorage support (Default should be 'light')
+  const [theme, setTheme] = useState('light');
   const [fontSize, setFontSize] = useState('medium');
   const [mounted, setMounted] = useState(false);
 
@@ -40,6 +40,22 @@ export default function RootLayout({ children }) {
   const [linuxServers, setLinuxServers] = useState(initialLinuxServers);
   const [logs, setLogs] = useState(initialLogs);
   
+  // Linux Servers States
+  const [activeTerminalId, setActiveTerminalId] = useState(null);
+  const [terminalHistory, setTerminalHistory] = useState({
+    'lnx-01': [{ type: 'output', text: 'srv-prod-app-01 login: admin\nPassword: *********\nLast login: Wed Jun 17 19:42:10 2026 from 10.0.0.12\n\nWelcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-40-generic)\n* Documentation:  https://help.ubuntu.com\n* Management:     https://landscape.canonical.com\n* Support:        https://ubuntu.com/pro\n\nActive command shell started. Type commands from drop-down below.' }],
+    'lnx-02': [{ type: 'output', text: 'srv-prod-app-02 login: admin\nPassword: *********\nLast login: Wed Jun 17 20:12:05 2026 from 10.0.0.12\n\nWelcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-40-generic)\nActive command shell started. Type commands from drop-down below.' }],
+    'lnx-03': [{ type: 'output', text: 'srv-prod-db-01 login: dbadmin\nPassword: *********\nLast login: Mon Jun 15 08:33:14 2026 from 10.0.0.4\n\nWelcome to Rocky Linux 9.4 (Blue Onyx)\nActive command shell started. Type commands from drop-down below.' }],
+    'lnx-04': [{ type: 'output', text: 'srv-stage-cache-01 login: cacheadm\nPassword: *********\nLast login: Wed Jun 17 21:00:15 2026 from 10.0.0.12\n\nWelcome to Debian GNU/Linux 12 (bookworm)\nActive command shell started. Type commands from drop-down below.' }]
+  });
+
+  // Log Explorer States
+  const [selectedLogServer, setSelectedLogServer] = useState('all');
+  const [selectedLogService, setSelectedLogService] = useState('all');
+  const [selectedLogLevel, setSelectedLogLevel] = useState('all');
+  const [logSearchKeyword, setLogSearchKeyword] = useState('');
+  const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+
   // Detail modal state
   const [selectedServer, setSelectedServer] = useState(null);
   const [isServerModalOpen, setIsServerModalOpen] = useState(false);
@@ -66,7 +82,7 @@ export default function RootLayout({ children }) {
 
   // Hydrate theme and font-size from localStorage on mount
   useEffect(() => {
-    const savedTheme = localStorage.getItem('monitoring-theme') || 'dark';
+    const savedTheme = localStorage.getItem('monitoring-theme') || 'light';
     const savedFontSize = localStorage.getItem('monitoring-font-size') || 'medium';
     setTheme(savedTheme);
     setFontSize(savedFontSize);
@@ -139,11 +155,11 @@ export default function RootLayout({ children }) {
   // Prevent flash of unstyled content
   if (!mounted) {
     return (
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <head>
           <title>Monitoring Dashboard</title>
         </head>
-        <body style={{ background: '#090d16', color: '#f8fafc' }} />
+        <body style={{ background: '#090d16', color: '#f8fafc' }} suppressHydrationWarning />
       </html>
     );
   }
@@ -185,6 +201,42 @@ export default function RootLayout({ children }) {
     setIsServerModalOpen(true);
   };
 
+  const handleRebootServer = (id) => {
+    setServers(prev => prev.map(s => {
+      if (s.id === id) {
+        return { ...s, cpu: 5, ram: 12, status: 'online' };
+      }
+      return s;
+    }));
+    setIsServerModalOpen(false);
+    
+    // Add info alert
+    const target = servers.find(s => s.id === id);
+    setAlerts(prev => [
+      {
+        id: `alt-${Date.now()}`,
+        message: `Command issued: Soft-reboot initiated for node ${target?.name}`,
+        type: 'info',
+        time: 'Just now',
+        code: 'NODE_REBOOTING'
+      },
+      ...prev
+    ]);
+  };
+
+  const resetLayout = () => {
+    setWidgets({
+      statsRow: true,
+      cpuTrend: true,
+      memoryTrend: true,
+      networkLoad: true,
+      serverTable: true,
+      alertFeed: true,
+      radialHealth: true
+    });
+    setLayoutColumns('4');
+  };
+
   // We clone children to pass the active telemetry data states to them
   const childProps = {
     widgets,
@@ -203,12 +255,28 @@ export default function RootLayout({ children }) {
     setServers,
     logs,
     setLogs,
+    activeTerminalId,
+    setActiveTerminalId,
+    terminalHistory,
+    setTerminalHistory,
+    selectedLogServer,
+    setSelectedLogServer,
+    selectedLogService,
+    setSelectedLogService,
+    selectedLogLevel,
+    setSelectedLogLevel,
+    logSearchKeyword,
+    setLogSearchKeyword,
+    isAutoScrollEnabled,
+    setIsAutoScrollEnabled,
+    handleRebootServer,
+    resetLayout,
   };
 
   const activeTab = pathname ? (pathname.split('/').pop() || 'dashboard') : 'dashboard';
 
   return (
-    <html lang="en" data-theme={theme} data-font-size={fontSize}>
+    <html lang="en" data-theme={theme} data-font-size={fontSize} suppressHydrationWarning>
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -217,7 +285,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
-      <body>
+      <body suppressHydrationWarning>
         <div className="app-container">
           <Sidebar 
             activeTab={activeTab} 
@@ -245,27 +313,23 @@ export default function RootLayout({ children }) {
             </div>
           </main>
 
-          <CustomizerDrawer 
-            isOpen={isCustomizerOpen}
-            onClose={() => setIsCustomizerOpen(false)}
+           <CustomizerDrawer 
+            isCustomizerOpen={isCustomizerOpen}
+            setIsCustomizerOpen={setIsCustomizerOpen}
             widgets={widgets}
             setWidgets={setWidgets}
-            layoutColumns={layoutColumns}
-            setLayoutColumns={setLayoutColumns}
-            theme={theme}
-            setTheme={setTheme}
-            fontSize={fontSize}
-            setFontSize={setFontSize}
-            isLive={isLive}
-            setIsLive={setIsLive}
             updateFrequency={updateFrequency}
             setUpdateFrequency={setUpdateFrequency}
+            fontSize={fontSize}
+            setFontSize={setFontSize}
+            resetLayout={resetLayout}
           />
 
           <ServerInspectModal 
-            isOpen={isServerModalOpen}
-            onClose={() => setIsServerModalOpen(false)}
-            server={selectedServer}
+            isServerModalOpen={isServerModalOpen}
+            setIsServerModalOpen={setIsServerModalOpen}
+            selectedServer={selectedServer}
+            handleRebootServer={handleRebootServer}
           />
         </div>
       </body>
