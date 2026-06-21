@@ -10,25 +10,9 @@ export const AlertLogsTab = ({
       title="System Operations Event Feed" 
       subtitle="Showing last events parsed by operations telemetry agents"
       actions={
-        <div style={{ display: 'flex', gap: '12px' }}>
-          <Button variant="secondary" onClick={() => setAlerts([])}>
-            Clear Logs
-          </Button>
-          <Button variant="primary" onClick={() => {
-            setAlerts(prev => [
-              {
-                id: `alt-${Date.now()}`,
-                message: 'Forced telemetry check triggered by administrator profile ajite',
-                type: 'info',
-                time: 'Just now',
-                code: 'FORCE_CHECK'
-              },
-              ...prev
-            ]);
-          }}>
-            Trigger Test Event
-          </Button>
-        </div>
+        <Button variant="secondary" onClick={() => setAlerts([])}>
+          Clear Logs
+        </Button>
       }
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
