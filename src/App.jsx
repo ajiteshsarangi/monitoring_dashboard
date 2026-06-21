@@ -11,6 +11,7 @@ import { LogExplorerTab } from './components/LogExplorerTab';
 import { CustomizerDrawer } from './components/CustomizerDrawer';
 import { ServerInspectModal } from './components/ServerInspectModal';
 import { getStatusConfig } from './utils/statusHelper';
+import apiClient from './utils/apiClient';
 
 // Import Mock Data
 import {
@@ -148,27 +149,30 @@ function App() {
   const fetchTelemetry = async () => {
     try {
       const [healthRes, metricsRes, componentsRes, serversRes, alertsRes] = await Promise.all([
-        fetch('http://127.0.0.1:8000/health').then(r => {
-          if (!r.ok) throw new Error('Health check status not OK');
-          return r.json();
-        }),
-        fetch('http://127.0.0.1:8000/metrics').then(r => r.json()),
-        fetch('http://127.0.0.1:8000/components').then(r => r.json()),
-        fetch('http://127.0.0.1:8000/servers').then(r => r.json()),
-        fetch('http://127.0.0.1:8000/alerts').then(r => r.json()),
+        apiClient.get('/health'),
+        apiClient.get('/metrics'),
+        apiClient.get('/components'),
+        apiClient.get('/servers'),
+        apiClient.get('/alerts')
       ]);
 
-      if (healthRes.status === 'ok') {
+      const healthData = healthRes.data;
+      const metricsData = metricsRes.data;
+      const componentsData = componentsRes.data;
+      const serversData = serversRes.data;
+      const alertsData = alertsRes.data;
+
+      if (healthData && healthData.status === 'ok') {
         setHealthStatus('healthy');
       } else {
         setHealthStatus('offline');
       }
 
       setLastCheckTime(new Date().toLocaleTimeString());
-      setLatestMetrics(metricsRes);
+      setLatestMetrics(metricsData);
 
       // Map components to the 'servers' state
-      const mappedServers = componentsRes.map(comp => {
+      const mappedServers = componentsData.map(comp => {
         return {
           ...comp,
           id: comp.component_id,
@@ -186,8 +190,8 @@ function App() {
       setServers(mappedServers);
 
       // Map Linux Fleet components
-      const mappedLinux = serversRes.map(srv => {
-        const serverComponents = componentsRes.filter(c => c.server_name === srv.name || c.host === srv.host);
+      const mappedLinux = serversData.map(srv => {
+        const serverComponents = componentsData.filter(c => c.server_name === srv.name || c.host === srv.host);
         const servicesList = serverComponents.map(c => ({
           name: c.component_name || c.component_id,
           status: mapComponentStatus(c.status),
@@ -254,9 +258,9 @@ function App() {
 
       // Update historical metrics using values directly from metrics API response
       const newLabel = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      const newCpu = metricsRes && metricsRes.cpu !== undefined ? Math.round(metricsRes.cpu) : 0;
-      const newMem = metricsRes && metricsRes.memory !== undefined ? Math.round(metricsRes.memory) : 0;
-      const netValue = parseFloat(metricsRes.network) || 0;
+      const newCpu = metricsData && metricsData.cpu !== undefined ? Math.round(metricsData.cpu) : 0;
+      const newMem = metricsData && metricsData.memory !== undefined ? Math.round(metricsData.memory) : 0;
+      const netValue = parseFloat(metricsData.network) || 0;
 
       setHistoricalData(prev => {
         return {
@@ -267,7 +271,7 @@ function App() {
       });
 
       // Map Alerts
-      const mappedAlerts = alertsRes.map(alt => ({
+      const mappedAlerts = alertsData.map(alt => ({
         id: `alt-${alt.id}`,
         message: alt.message,
         type: alt.severity === 'CRITICAL' ? 'danger' : (alt.severity === 'WARNING' ? 'warning' : 'info'),
@@ -397,12 +401,7 @@ function App() {
     ]);
 
     try {
-      const response = await fetch(`http://127.0.0.1:8000/components/${id}/restart`, {
-        method: 'POST'
-      });
-      if (!response.ok) {
-        throw new Error('Failed to issue restart command');
-      }
+      await apiClient.post(`/components/${id}/restart`);
       
       // Optimistically update status to show it reboots
       setServers(prev => prev.map(s => {
