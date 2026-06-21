@@ -36,16 +36,17 @@ export const LineChart = ({ data = [], height = 220, strokeColor = 'var(--accent
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [containerWidth, setContainerWidth] = useState(500);
 
-  // Resize listener equivalent (simple hook to get container width)
+  // ResizeObserver to detect real-time client width changes (such as sidebar collapse)
   React.useEffect(() => {
-    if (containerRef.current) {
-      const handleResize = () => {
-        setContainerWidth(containerRef.current.clientWidth);
-      };
-      handleResize();
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
+    if (!containerRef.current) return;
+    const handleResize = (entries) => {
+      for (let entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    };
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
   }, []);
 
   const padding = 30;
@@ -214,13 +215,17 @@ export const BarChart = ({ data = [], height = 220, barColor = 'var(--accent-cya
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [containerWidth, setContainerWidth] = useState(500);
 
+  // ResizeObserver to detect real-time client width changes (such as sidebar collapse)
   React.useEffect(() => {
-    if (containerRef.current) {
-      const handleResize = () => setContainerWidth(containerRef.current.clientWidth);
-      handleResize();
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
+    if (!containerRef.current) return;
+    const handleResize = (entries) => {
+      for (let entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    };
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(containerRef.current);
+    return () => resizeObserver.disconnect();
   }, []);
 
   const padding = 30;
