@@ -382,27 +382,51 @@ function App() {
     setIsServerModalOpen(true);
   };
 
-  const handleRebootServer = (id) => {
-    setServers(prev => prev.map(s => {
-      if (s.id === id) {
-        return { ...s, cpu: 5, ram: 12, status: 'online' };
-      }
-      return s;
-    }));
-    setIsServerModalOpen(false);
-    
-    // Add info alert
+  const handleRebootServer = async (id) => {
+    // Add info alert immediately
     const target = servers.find(s => s.id === id);
     setAlerts(prev => [
       {
         id: `alt-${Date.now()}`,
-        message: `Command issued: Soft-reboot initiated for node ${target?.name}`,
+        message: `Command issued: Soft-reboot initiated for node ${target?.name || id}`,
         type: 'info',
         time: 'Just now',
         code: 'NODE_REBOOTING'
       },
       ...prev
     ]);
+
+    try {
+      const response = await fetch(`http://127.0.0.1:8000/components/${id}/restart`, {
+        method: 'POST'
+      });
+      if (!response.ok) {
+        throw new Error('Failed to issue restart command');
+      }
+      
+      // Optimistically update status to show it reboots
+      setServers(prev => prev.map(s => {
+        if (s.id === id) {
+          return { ...s, cpu: 5, ram: 12, status: 'online' };
+        }
+        return s;
+      }));
+    } catch (err) {
+      console.error("Reboot component failed:", err);
+      // Add a warning alert on failure
+      setAlerts(prev => [
+        {
+          id: `alt-${Date.now()}`,
+          message: `Failed to reboot node ${target?.name || id}: ${err.message}`,
+          type: 'danger',
+          time: 'Just now',
+          code: 'NODE_REBOOT_FAILED'
+        },
+        ...prev
+      ]);
+    }
+
+    setIsServerModalOpen(false);
   };
 
   // Filter server fleet list
