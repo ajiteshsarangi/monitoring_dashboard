@@ -72,7 +72,7 @@ export const CustomizerDrawer = ({
             onChange={(val) => setWidgets(prev => ({ ...prev, memoryTrend: val }))} 
           />
           <Toggle 
-            label="Egress Bandwidth Bar" 
+            label="Host Load Average Comparison" 
             checked={widgets.networkLoad} 
             onChange={(val) => setWidgets(prev => ({ ...prev, networkLoad: val }))} 
           />

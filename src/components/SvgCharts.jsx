@@ -175,13 +175,13 @@ export const LineChart = ({ data = [], height = 220, strokeColor = 'var(--accent
         {/* X-Axis Labels (first, middle, last for clean spacing) */}
         {scaledPoints.length > 1 && (
           <>
-            <text x={scaledPoints[0].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="start">
+            <text x={scaledPoints[0].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="start">
               {scaledPoints[0].label}
             </text>
-            <text x={scaledPoints[Math.floor(scaledPoints.length / 2)].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="middle">
+            <text x={scaledPoints[Math.floor(scaledPoints.length / 2)].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="middle">
               {scaledPoints[Math.floor(scaledPoints.length / 2)].label}
             </text>
-            <text x={scaledPoints[scaledPoints.length - 1].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="end">
+            <text x={scaledPoints[scaledPoints.length - 1].x} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="end">
               {scaledPoints[scaledPoints.length - 1].label}
             </text>
           </>
@@ -227,7 +227,7 @@ export const BarChart = ({ data = [], height = 220, barColor = 'var(--accent-cya
   const chartHeight = height;
   
   const values = data.map(d => d.value);
-  const maxVal = Math.max(...values, 10);
+  const maxVal = Math.max(...values, 1.0);
   const minVal = 0;
   const valRange = maxVal - minVal;
 
@@ -299,28 +299,40 @@ export const BarChart = ({ data = [], height = 220, barColor = 'var(--accent-cya
             y={bar.y}
             width={bar.width}
             height={Math.max(bar.height, 2)} // minimum 2px height for visual feedback
-            fill={barColor}
+            fill={bar.raw?.color || barColor}
             rx="3"
             className="chart-bar"
-            style={{ fill: hoveredBar && hoveredBar.label === bar.label ? 'var(--accent-blue)' : barColor }}
+            style={{ fill: hoveredBar && hoveredBar.label === bar.label ? 'var(--border-color-hover)' : (bar.raw?.color || barColor) }}
             onMouseMove={(e) => handleMouseMove(e, bar)}
             onMouseLeave={handleMouseLeave}
           />
         ))}
 
-        {/* Labels (Shows first, mid, last bar label for layout cleanliness) */}
-        {bars.length > 1 && (
-          <>
-            <text x={bars[0].x + bars[0].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="middle">
-              {bars[0].label}
-            </text>
-            <text x={bars[Math.floor(bars.length / 2)].x + bars[Math.floor(bars.length / 2)].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="middle">
-              {bars[Math.floor(bars.length / 2)].label}
-            </text>
-            <text x={bars[bars.length - 1].x + bars[bars.length - 1].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="middle">
-              {bars[bars.length - 1].label}
-            </text>
-          </>
+        {/* Labels (Shows all for small datasets, first/mid/last for larger series) */}
+        {bars.length > 0 && (
+          bars.length <= 15 ? (
+            bars.map((bar, i) => {
+              const displayLabel = bar.raw?.xAxisLabel !== undefined ? bar.raw.xAxisLabel : bar.label;
+              if (!displayLabel) return null;
+              return (
+                <text key={i} x={bar.x + bar.width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="10" textAnchor="middle">
+                  {displayLabel}
+                </text>
+              );
+            })
+          ) : (
+            <>
+              <text x={bars[0].x + bars[0].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="middle">
+                {bars[0].label}
+              </text>
+              <text x={bars[Math.floor(bars.length / 2)].x + bars[Math.floor(bars.length / 2)].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="middle">
+                {bars[Math.floor(bars.length / 2)].label}
+              </text>
+              <text x={bars[bars.length - 1].x + bars[bars.length - 1].width/2} y={chartHeight - 10} fill="var(--text-muted)" fontSize="11" textAnchor="middle">
+                {bars[bars.length - 1].label}
+              </text>
+            </>
+          )
         )}
       </svg>
 

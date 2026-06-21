@@ -12,7 +12,9 @@ export const Sidebar = ({
   setActiveTab,
   isSidebarCollapsed,
   serversCount,
-  hasDangerAlerts
+  linuxServersCount = 4,
+  hasDangerAlerts,
+  healthStatus = 'healthy'
 }) => {
   return (
     <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
@@ -37,7 +39,7 @@ export const Sidebar = ({
             onClick={() => setActiveTab('nodes')}
           >
             <CpuIcon />
-            <span className="nav-text">Node Fleet ({serversCount})</span>
+            <span className="nav-text">Components ({serversCount})</span>
           </div>
         </li>
         <li>
@@ -46,7 +48,7 @@ export const Sidebar = ({
             onClick={() => setActiveTab('linux')}
           >
             <ServerIcon />
-            <span className="nav-text">Linux Fleet (4)</span>
+            <span className="nav-text">Linux Servers ({linuxServersCount})</span>
           </div>
         </li>
         <li>
@@ -70,9 +72,15 @@ export const Sidebar = ({
       </ul>
 
       <div className="sidebar-footer">
-        <div className="pulsar"></div>
-        <span className="footer-text" style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-secondary)' }}>
-          Application Healthy
+        <div 
+          className="pulsar" 
+          style={{ 
+            backgroundColor: healthStatus === 'healthy' ? 'var(--success)' : 'var(--danger)',
+            boxShadow: healthStatus === 'healthy' ? '0 0 6px var(--success)' : '0 0 6px var(--danger)'
+          }}
+        ></div>
+        <span className="footer-text" style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+          {healthStatus === 'healthy' ? 'Application Healthy' : 'Application Offline'}
         </span>
       </div>
     </aside>

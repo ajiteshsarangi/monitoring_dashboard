@@ -19,7 +19,8 @@ export const Header = ({
   theme,
   setTheme,
   isCustomizerOpen,
-  setIsCustomizerOpen
+  setIsCustomizerOpen,
+  healthStatus = 'healthy'
 }) => {
   return (
     <header className="top-header">
@@ -40,8 +41,8 @@ export const Header = ({
         {/* Live Indicator Switch */}
         <div className="flex-row-center gap-16" style={{ marginRight: 8 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginRight: 4 }}>
-            <span style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Telemetry Sync</span>
-            <span style={{ fontSize: 12, fontWeight: 700, fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Telemetry Sync</span>
+            <span style={{ fontSize: '12.5px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
               Last Check: {lastCheckTime}
             </span>
           </div>
@@ -49,12 +50,12 @@ export const Header = ({
             <div 
               className="pulsar" 
               style={{ 
-                backgroundColor: isLive ? '#22c55e' : 'var(--text-muted)',
-                boxShadow: isLive ? '0 0 6px #22c55e' : 'none'
+                backgroundColor: healthStatus === 'offline' ? 'var(--danger)' : (isLive ? 'var(--success)' : 'var(--text-muted)'),
+                boxShadow: healthStatus === 'offline' ? '0 0 6px var(--danger)' : (isLive ? '0 0 6px var(--success)' : 'none')
               }}
             ></div>
-            <span style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.05em', color: isLive ? '#22c55e' : 'var(--text-muted)' }}>
-              {isLive ? 'LIVE STREAMING' : 'PAUSED'}
+            <span style={{ fontSize: '12.5px', fontWeight: 700, letterSpacing: '0.05em', color: healthStatus === 'offline' ? 'var(--danger)' : (isLive ? 'var(--success)' : 'var(--text-muted)') }}>
+              {healthStatus === 'offline' ? 'PAUSED / OFFLINE' : (isLive ? 'LIVE STREAMING' : 'PAUSED')}
             </span>
           </div>
           <Button 
@@ -63,6 +64,7 @@ export const Header = ({
             onClick={() => setIsLive(!isLive)}
             className="flex-row-center"
             style={{ padding: '6px 10px' }}
+            disabled={healthStatus === 'offline'}
           >
             {isLive ? <PauseIcon size={12} /> : <PlayIcon size={12} />}
             {isLive ? 'Pause Stream' : 'Resume'}

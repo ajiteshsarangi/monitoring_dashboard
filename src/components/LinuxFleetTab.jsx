@@ -1,21 +1,24 @@
 import React from 'react';
 import { Badge, Button } from './UiKit';
 import { executeLinuxCommand } from '../mockData';
+import { getStatusConfig } from '../utils/statusHelper';
+
+const formatBytes = (bytes) => {
+  if (!bytes) return '0.00 GB';
+  const gb = bytes / (1024 * 1024 * 1024);
+  return `${gb.toFixed(2)} GB`;
+};
 
 export const LinuxFleetTab = ({
   linuxServers,
-  activeTerminalId,
-  setActiveTerminalId,
-  terminalHistory,
-  setTerminalHistory
+  handleOpenServer
 }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       <div className="dashboard-grid">
         {linuxServers.map(server => {
-          const isTerminalOpen = activeTerminalId === server.id;
-          const ramPct = Math.round((server.ramUsed / server.ramTotal) * 100);
-          const diskPct = Math.round((server.diskUsed / server.diskTotal) * 100);
+          const ramPct = (server.ramUsed && server.ramTotal) ? Math.round((server.ramUsed / server.ramTotal) * 100) : 0;
+          const diskPct = (server.diskUsed && server.diskTotal) ? Math.round((server.diskUsed / server.diskTotal) * 100) : 0;
           
           return (
             <div key={server.id} className="col-6">
@@ -24,43 +27,36 @@ export const LinuxFleetTab = ({
                 {/* Server Header Info */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <Badge 
-                      className={
-                        server.os.includes('Ubuntu') ? 'os-badge-ubuntu' : 
-                        server.os.includes('Rocky') ? 'os-badge-rocky' : 'os-badge-debian'
-                      }
-                    >
-                      {server.os.includes('Ubuntu') ? 'UBUNTU' : 
-                       server.os.includes('Rocky') ? 'ROCKY' : 'DEBIAN'}
-                    </Badge>
+ 
                     <div>
                       <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{server.hostname}</h3>
-                      <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>IP: {server.ip} • OS: {server.os}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>IP: {server.ip} • OS: {server.os}</span>
                     </div>
                   </div>
-                  <Badge variant={server.status === 'online' ? 'success' : server.status === 'warning' ? 'warning' : 'danger'}>
-                    {server.status}
+                  <Badge variant={getStatusConfig(server.status).variant}>
+                    {server.rawStatus || getStatusConfig(server.status).label}
                   </Badge>
                 </div>
-
-                {/* Specs Grid */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', padding: '16px 0' }}>
+                 {/* Specs Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', padding: '16px 0' }}>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>System Uptime</span>
+                    <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>System Uptime</span>
                     <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>{server.uptime}</div>
                   </div>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Unix Load Average</span>
+                    <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Unix Load Average</span>
                     <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>{server.loadAvg.join(', ')}</div>
                   </div>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Network Link</span>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>{server.interfaces.name} ({server.interfaces.speed})</div>
+                    <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Network Interface</span>
+                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>
+                      {server.interfaces.name} (Rx: {formatBytes(server.network_interfaces?.[0]?.rx_bytes)} | Tx: {formatBytes(server.network_interfaces?.[0]?.tx_bytes)})
+                    </div>
                   </div>
                   <div>
-                    <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>CPU Hardware</span>
-                    <div style={{ fontSize: '12px', fontWeight: 500, marginTop: 4, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={server.cpuModel}>
-                      {server.cpuCores} Cores ({server.cpuCores === 16 ? 'AMD EPYC' : 'Intel Xeon'})
+                    <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>CPU Hardware</span>
+                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {server.cpuCores ? `${server.cpuCores} vCPUs` : 'N/A'} {server.architecture && `(${server.architecture})`}
                     </div>
                   </div>
                 </div>
@@ -88,7 +84,11 @@ export const LinuxFleetTab = ({
                   <div className="metric-bar-group">
                     <div className="metric-bar-label">
                       <span>RAM Memory Allocation</span>
-                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{server.ramUsed.toFixed(1)} GB / {server.ramTotal.toFixed(1)} GB ({ramPct}%)</span>
+                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        {server.ramUsed && server.ramTotal 
+                          ? `${server.ramUsed.toFixed(1)} GB / ${server.ramTotal.toFixed(1)} GB (${ramPct}%)`
+                          : 'N/A'}
+                      </span>
                     </div>
                     <div className="metric-bar-wrapper">
                       <div 
@@ -104,8 +104,12 @@ export const LinuxFleetTab = ({
                   {/* Disk Space Usage */}
                   <div className="metric-bar-group" style={{ marginBottom: 0 }}>
                     <div className="metric-bar-label">
-                      <span>NVMe Disk Storage Capacity</span>
-                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{server.diskUsed} GB / {server.diskTotal} GB ({diskPct}%)</span>
+                      <span>Storage Space Allocation</span>
+                      <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+                        {server.diskUsed && server.diskTotal 
+                          ? `${server.diskUsed.toFixed(0)} GB / ${server.diskTotal.toFixed(0)} GB (${diskPct}%)`
+                          : 'N/A'}
+                      </span>
                     </div>
                     <div className="metric-bar-wrapper">
                       <div 
@@ -121,7 +125,7 @@ export const LinuxFleetTab = ({
 
                 {/* Deployed Services Health Summary */}
                 <div style={{ marginTop: '4px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
+                  <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
                     Deployed Services Summary
                   </span>
                   <div style={{ display: 'flex', gap: '8px' }}>
@@ -129,100 +133,39 @@ export const LinuxFleetTab = ({
                       <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
                         {(server.services || []).length}
                       </div>
-                      <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: '2px' }}>Total</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', marginTop: '2px' }}>Total</div>
                     </div>
-                    <div style={{ flex: 1, textAlign: 'center', background: 'rgba(34, 197, 94, 0.06)', padding: '6px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid rgba(34, 197, 94, 0.15)' }}>
-                      <div style={{ fontSize: '14px', fontWeight: 700, color: '#22c55e' }}>
+                    <div style={{ flex: 1, textAlign: 'center', background: 'rgba(var(--success-rgb), 0.06)', padding: '6px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid rgba(var(--success-rgb), 0.15)' }}>
+                      <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--success)' }}>
                         {(server.services || []).filter(s => s.status === 'online').length}
                       </div>
-                      <div style={{ fontSize: '9px', color: '#22c55e', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Up</div>
+                      <div style={{ fontSize: '10px', color: 'var(--success)', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Up</div>
                     </div>
                     <div style={{ flex: 1, textAlign: 'center', background: 'rgba(251, 191, 36, 0.06)', padding: '6px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid rgba(251, 191, 36, 0.15)' }}>
                       <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--warning)' }}>
                         {(server.services || []).filter(s => s.status === 'warning').length}
                       </div>
-                      <div style={{ fontSize: '9px', color: 'var(--warning)', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Degraded</div>
+                      <div style={{ fontSize: '10px', color: 'var(--warning)', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Degraded</div>
                     </div>
                     <div style={{ flex: 1, textAlign: 'center', background: 'rgba(239, 68, 68, 0.06)', padding: '6px 4px', borderRadius: 'var(--border-radius-sm)', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
                       <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--danger)' }}>
                         {(server.services || []).filter(s => s.status === 'critical').length}
                       </div>
-                      <div style={{ fontSize: '9px', color: 'var(--danger)', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Critical</div>
+                      <div style={{ fontSize: '10px', color: 'var(--danger)', opacity: 0.8, textTransform: 'uppercase', marginTop: '2px' }}>Critical</div>
                     </div>
                   </div>
                 </div>
 
-                {/* Interactive Console Shell Drawer toggle button */}
-                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                    {isTerminalOpen ? '🟢 SSH Console Session Active' : '⚪ Shell Diagnostic Connection Idle'}
-                  </span>
+                {/* Diagnostics Action Button */}
+                <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end' }}>
                   <Button 
-                    variant={isTerminalOpen ? 'danger' : 'primary'} 
+                    variant="primary" 
                     size="sm"
-                    onClick={() => setActiveTerminalId(isTerminalOpen ? null : server.id)}
+                    onClick={() => handleOpenServer(server)}
                   >
-                    {isTerminalOpen ? 'Terminate SSH' : 'Establish SSH Shell'}
+                    Diagnostics
                   </Button>
                 </div>
-
-                {/* Mock SSH Terminal Console */}
-                {isTerminalOpen && (
-                  <div className="terminal-shell" style={{ marginTop: '12px' }}>
-                    <div className="terminal-header-pane">
-                      <div className="terminal-dots">
-                        <span className="terminal-dot red" />
-                        <span className="terminal-dot yellow" />
-                        <span className="terminal-dot green" />
-                      </div>
-                      <div>admin@{server.name}: ~ (secure shell)</div>
-                      <div>10Gbps</div>
-                    </div>
-                    
-                    <div className="terminal-output" ref={(el) => {
-                      if (el) el.scrollTop = el.scrollHeight; // Auto scroll to bottom
-                    }}>
-                      {terminalHistory[server.id]?.map((line, idx) => (
-                        <div key={idx} className={`terminal-line ${line.type}`}>
-                          {line.text}
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="terminal-input-row">
-                      <span className="terminal-prompt">admin@{server.name}:~$</span>
-                      <select 
-                        className="terminal-select-cmd"
-                        value="" 
-                        onChange={(e) => {
-                          const command = e.target.value;
-                          if (!command) return;
-                          
-                          if (command === 'clear') {
-                            setTerminalHistory(prev => ({
-                              ...prev,
-                              [server.id]: []
-                            }));
-                          } else {
-                            const logs = executeLinuxCommand(server, command);
-                            setTerminalHistory(prev => ({
-                              ...prev,
-                              [server.id]: [...(prev[server.id] || []), ...logs]
-                            }));
-                          }
-                        }}
-                      >
-                        <option value="" disabled>-- Execute Diagnostic SSH Shell Command --</option>
-                        <option value="df -h">df -h (Check Filesystem Disk Capacity)</option>
-                        <option value="free -m">free -m (Check Memory Ram Pools)</option>
-                        <option value="uptime">uptime (Check Load Average and Uptime)</option>
-                        <option value="uname -a">uname -a (Check OS Linux Kernel details)</option>
-                        <option value="top -b -n 1">top -b -n 1 (Check Top Resource Daemon Processes)</option>
-                        <option value="clear">clear (Reset Shell Output Screen)</option>
-                      </select>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           );

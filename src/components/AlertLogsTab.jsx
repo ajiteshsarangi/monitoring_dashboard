@@ -55,7 +55,7 @@ export const AlertLogsTab = ({
                   <span className="font-bold" style={{ fontSize: '13px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
                     {alt.code}
                   </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>• {alt.time}</span>
+                  <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>• {alt.time}</span>
                 </div>
                 <p style={{ fontSize: '14px', color: 'var(--text-primary)' }}>{alt.message}</p>
               </div>

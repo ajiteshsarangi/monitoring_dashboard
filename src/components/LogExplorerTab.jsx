@@ -84,10 +84,10 @@ export const LogExplorerTab = ({
         {/* Filters Row */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr', gap: '16px', backgroundColor: 'var(--bg-tertiary)', padding: '16px', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)' }}>
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Server Node</label>
+            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Server Node</label>
             <select 
               className="form-control" 
-              style={{ width: '100%', fontSize: '13px' }}
+              style={{ width: '100%', fontSize: '13.5px' }}
               value={selectedLogServer}
               onChange={(e) => setSelectedLogServer(e.target.value)}
             >
@@ -100,10 +100,10 @@ export const LogExplorerTab = ({
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Deployed Service</label>
+            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Deployed Service</label>
             <select 
               className="form-control" 
-              style={{ width: '100%', fontSize: '13px' }}
+              style={{ width: '100%', fontSize: '13.5px' }}
               value={selectedLogService}
               onChange={(e) => setSelectedLogService(e.target.value)}
             >
@@ -117,10 +117,10 @@ export const LogExplorerTab = ({
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Severity Level</label>
+            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Severity Level</label>
             <select 
               className="form-control" 
-              style={{ width: '100%', fontSize: '13px' }}
+              style={{ width: '100%', fontSize: '13.5px' }}
               value={selectedLogLevel}
               onChange={(e) => setSelectedLogLevel(e.target.value)}
             >
@@ -133,12 +133,12 @@ export const LogExplorerTab = ({
           </div>
 
           <div>
-            <label style={{ fontSize: '11px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Search logs by keyword</label>
+            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Search logs by keyword</label>
             <input 
               type="text" 
               placeholder="Type keyword (e.g. timeout, connection, cache)..."
               className="form-control"
-              style={{ width: '100%', fontSize: '13px' }}
+              style={{ width: '100%', fontSize: '13.5px' }}
               value={logSearchKeyword}
               onChange={(e) => setLogSearchKeyword(e.target.value)}
             />
@@ -156,7 +156,7 @@ export const LogExplorerTab = ({
               <span style={{ marginLeft: '6px', fontWeight: 600 }}>Log Terminal Console</span>
             </div>
             <div className="flex-row-center">
-              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', userSelect: 'none', fontSize: '11px' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer', userSelect: 'none', fontSize: '11.5px' }}>
                 <input 
                   type="checkbox" 
                   checked={isAutoScrollEnabled} 

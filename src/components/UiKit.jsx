@@ -67,12 +67,12 @@ export const Badge = ({ children, variant = 'info', className = '' }) => {
 /**
  * 4. Modal Component
  */
-export const Modal = ({ isOpen, onClose, title, children, footer }) => {
+export const Modal = ({ isOpen, onClose, title, children, footer, style }) => {
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content" style={style} onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <div className="modal-title">{title}</div>
           <button className="modal-close-btn" onClick={onClose}>

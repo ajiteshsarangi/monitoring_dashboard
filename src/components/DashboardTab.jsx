@@ -9,6 +9,7 @@ import {
 } from './Icons';
 import { Card, Badge, Button, StatCard } from './UiKit';
 import { LineChart, BarChart, RadialProgress } from './SvgCharts';
+import { getStatusConfig } from '../utils/statusHelper';
 
 export const DashboardTab = ({
   widgets,
@@ -36,7 +37,7 @@ export const DashboardTab = ({
             trend={aggregateMetrics.currentCpu > 70 ? "High Usage" : "Stable Load"}
             trendValue={aggregateMetrics.currentCpu > 70 ? "+4.2%" : "-1.5%"}
             trendDirection={aggregateMetrics.currentCpu > 70 ? "up" : "down"}
-            className={`col-${layoutColumns === '4' ? '3' : '4'} glow-card`}
+            className="col-3 glow-card"
           />
           <StatCard 
             label="Active RAM Pool"
@@ -45,28 +46,26 @@ export const DashboardTab = ({
             trend="Steady allocation"
             trendValue="+0.4%"
             trendDirection="neutral"
-            className={`col-${layoutColumns === '4' ? '3' : '4'} glow-card`}
+            className="col-3 glow-card"
+          />
+          <StatCard 
+            label="Storage Volume (Disk)"
+            value={`${aggregateMetrics.currentDisk}%`}
+            icon={<ServerIcon size={20} />}
+            trend="Volume usage rate"
+            trendValue="Nominal"
+            trendDirection="neutral"
+            className="col-3 glow-card"
           />
           <StatCard 
             label="Network Throughput"
-            value={`${aggregateMetrics.currentNet} Mbps`}
+            value={aggregateMetrics.currentNet}
             icon={<UsersIcon size={20} />}
-            trend="Spike in ingestion"
-            trendValue="+14.2%"
+            trend="Ingress Traffic"
+            trendValue="Active"
             trendDirection="up"
-            className={`col-${layoutColumns === '4' ? '3' : '4'} glow-card`}
+            className="col-3 glow-card"
           />
-          {layoutColumns === '4' && (
-            <StatCard 
-              label="Active Nodes Online"
-              value={`${aggregateMetrics.onlineServers} / ${aggregateMetrics.totalServers}`}
-              icon={<ServerIcon size={20} />}
-              trend={aggregateMetrics.criticalServers > 0 ? "Critical Node Warning" : "Fleet operating optimally"}
-              trendValue={aggregateMetrics.criticalServers > 0 ? `${aggregateMetrics.criticalServers} Critical` : "Healthy"}
-              trendDirection={aggregateMetrics.criticalServers > 0 ? "down" : "up"}
-              className="col-3 glow-card"
-            />
-          )}
         </div>
       )}
 
@@ -95,8 +94,8 @@ export const DashboardTab = ({
         {/* Health Radial Guage Dial */}
         {widgets.radialHealth && (
           <Card 
-            title="Aggregate Health" 
-            subtitle="Weighted node operating metrics"
+            title="Aggregate Host Health" 
+            subtitle="Weighted VM and host operating metrics"
             className={widgets.cpuTrend ? "col-4 glow-card" : "col-12 glow-card"}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '220px' }}>
@@ -106,8 +105,8 @@ export const DashboardTab = ({
               />
               <div style={{ marginTop: '16px', fontSize: '13px', fontWeight: 500, color: 'var(--text-secondary)' }}>
                 {aggregateMetrics.healthScore === 100 
-                  ? 'All clusters healthy and reachable' 
-                  : `${aggregateMetrics.criticalServers} node(s) require attention`}
+                  ? 'All host servers healthy and reachable' 
+                  : `${linuxServers.filter(s => s.status === 'critical').length} host server(s) require attention`}
               </div>
             </div>
           </Card>
@@ -130,15 +129,57 @@ export const DashboardTab = ({
           </Card>
         )}
 
-        {/* Network Bandwidth Bar Chart */}
+        {/* Host Load Average Comparison Bar Chart */}
         {widgets.networkLoad && (
           <Card 
-            title="Egress Traffic Profile" 
-            subtitle="Outgoing network bandwidth (Mbps)"
+            title="Host Load Average Comparison" 
+            subtitle="Recent queue load metrics across host server nodes"
             className="col-6 glow-card"
+            actions={
+              <div style={{ display: 'flex', gap: '12px', fontSize: '12px', fontWeight: 600 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-secondary)' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-blue)' }}></span> 1m
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-secondary)' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-cyan)' }}></span> 5m
+                </span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--text-secondary)' }}>
+                  <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#8b5cf6' }}></span> 15m
+                </span>
+              </div>
+            }
           >
             <BarChart 
-              data={historicalData.networkData} 
+              data={linuxServers.flatMap(srv => {
+                const shortName = srv.name
+                  .replace('APP SERVER', 'App')
+                  .replace('SERVER', 'Srv');
+                
+                const oneMin = srv.loadAvg?.[0] ?? srv.load_average?.one_minute ?? 0;
+                const fiveMin = srv.loadAvg?.[1] ?? srv.load_average?.five_minutes ?? 0;
+                const fifteenMin = srv.loadAvg?.[2] ?? srv.load_average?.fifteen_minutes ?? 0;
+
+                return [
+                  { 
+                    label: `${srv.name} (1-Min Load)`, 
+                    value: oneMin, 
+                    xAxisLabel: '', 
+                    color: 'var(--accent-blue)' 
+                  },
+                  { 
+                    label: `${srv.name} (5-Min Load)`, 
+                    value: fiveMin, 
+                    xAxisLabel: shortName, 
+                    color: 'var(--accent-cyan)' 
+                  },
+                  { 
+                    label: `${srv.name} (15-Min Load)`, 
+                    value: fifteenMin, 
+                    xAxisLabel: '', 
+                    color: '#8b5cf6' 
+                  }
+                ];
+              })} 
               barColor="var(--accent-blue)"
             />
           </Card>
@@ -202,27 +243,39 @@ export const DashboardTab = ({
 
             {/* Service Grid Map */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-              {linuxServers.map(server => (
-                <div key={server.id} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius-md)', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>
-                    <span className="service-host-title">{server.name}</span>
-                    <Badge variant={server.status === 'online' ? 'success' : server.status === 'warning' ? 'warning' : 'danger'}>
-                      {server.status}
-                    </Badge>
+              {linuxServers.map(server => {
+                const srvStatusCfg = getStatusConfig(server.status);
+                return (
+                  <div key={server.id} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius-md)', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>
+                      <span className="service-host-title">{server.name}</span>
+                      <Badge variant={srvStatusCfg.variant}>
+                        {srvStatusCfg.label}
+                      </Badge>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '280px', overflowY: 'auto', paddingRight: '4px' }}>
+                      {(server.services || []).map((svc, sidx) => {
+                        const svcStatusCfg = getStatusConfig(svc.rawStatus || svc.status);
+                        return (
+                          <div key={sidx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13.5px' }}>
+                            <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{svc.name}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', fontWeight: 600, color: svcStatusCfg.color }}>
+                              <span style={{ 
+                                width: '6px', 
+                                height: '6px', 
+                                borderRadius: '50%', 
+                                backgroundColor: svcStatusCfg.color, 
+                                boxShadow: `0 0 4px ${svcStatusCfg.color}` 
+                              }}></span>
+                              {svcStatusCfg.label}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '280px', overflowY: 'auto', paddingRight: '4px' }}>
-                    {(server.services || []).map((svc, sidx) => (
-                      <div key={sidx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13.5px' }}>
-                        <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{svc.name}</span>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', fontWeight: 600, color: svc.status === 'online' ? '#22c55e' : svc.status === 'warning' ? 'var(--warning)' : 'var(--danger)' }}>
-                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: svc.status === 'online' ? '#22c55e' : svc.status === 'warning' ? 'var(--warning)' : 'var(--danger)', boxShadow: svc.status === 'online' ? '0 0 4px #22c55e' : svc.status === 'warning' ? '0 0 4px var(--warning)' : '0 0 4px var(--danger)' }}></span>
-                          {svc.status === 'online' ? 'UP' : svc.status === 'warning' ? 'DEGRADED' : 'CRITICAL'}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </Card>
@@ -233,15 +286,15 @@ export const DashboardTab = ({
         {/* Fleet Node List Table */}
         {widgets.serverTable && (
           <Card 
-            title="Reachable Server Fleet Nodes" 
-            subtitle="Active compute resource clusters"
+            title="Reachable Node Fleet Components" 
+            subtitle="Active microservice deployments"
             className={widgets.alertFeed ? "col-8 glow-card dashboard-bottom-card" : "col-12 glow-card dashboard-bottom-card"}
             actions={
               <input 
                 type="text" 
-                placeholder="Search fleet nodes..."
+                placeholder="Search components..."
                 className="form-control"
-                style={{ padding: '6px 12px', fontSize: 13, width: 180 }}
+                style={{ padding: '6px 12px', fontSize: '13.5px', width: 180 }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
@@ -251,9 +304,9 @@ export const DashboardTab = ({
               <table className="table">
                 <thead>
                   <tr>
-                    <th>Node Name</th>
-                    <th>Role / Type</th>
-                    <th>Ports</th>
+                    <th>Component</th>
+                    <th>Host</th>
+                    <th>Port</th>
                     <th>CPU</th>
                     <th>RAM</th>
                     <th className="text-center">Status</th>
@@ -264,29 +317,32 @@ export const DashboardTab = ({
                   {filteredServers.length === 0 ? (
                     <tr>
                       <td colSpan="7" style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '24px 0' }}>
-                        No nodes matching query found.
+                        No components matching query found.
                       </td>
                     </tr>
                   ) : (
-                    filteredServers.map((srv) => (
-                      <tr key={srv.id}>
-                        <td className="font-semibold">{srv.name}</td>
-                        <td style={{ color: 'var(--text-secondary)' }}>{srv.type}</td>
-                        <td style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{srv.ports}</td>
-                        <td className="font-semibold">{srv.cpu}%</td>
-                        <td className="font-semibold">{srv.ram}%</td>
-                        <td className="text-center">
-                          <Badge variant={srv.status === 'online' ? 'success' : srv.status === 'warning' ? 'warning' : 'danger'}>
-                            {srv.status}
-                          </Badge>
-                        </td>
-                        <td className="text-center">
-                          <Button variant="secondary" size="sm" onClick={() => handleOpenServer(srv)}>
-                            Inspect
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
+                    filteredServers.map((srv) => {
+                      const compStatusCfg = getStatusConfig(srv.rawStatus || srv.status);
+                      return (
+                        <tr key={srv.id}>
+                          <td className="font-semibold">{srv.name}</td>
+                          <td style={{ color: 'var(--text-secondary)' }}>{srv.type}</td>
+                          <td style={{ color: 'var(--text-secondary)' }}>{srv.ports}</td>
+                          <td>{srv.cpu}%</td>
+                          <td>{srv.ram}%</td>
+                          <td className="text-center">
+                            <Badge variant={compStatusCfg.variant}>
+                              {compStatusCfg.label}
+                            </Badge>
+                          </td>
+                          <td className="text-center">
+                            <Button variant="secondary" size="sm" onClick={() => handleOpenServer(srv)}>
+                              Inspect
+                            </Button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>
@@ -316,7 +372,7 @@ export const DashboardTab = ({
                 alerts.map((alt) => (
                   <div key={alt.id} className={`alert-item ${alt.type}`}>
                     <div className="alert-message">
-                      <div className="font-semibold" style={{ fontSize: '11px', textTransform: 'uppercase', marginBottom: 2, opacity: 0.8 }}>
+                      <div className="font-semibold" style={{ fontSize: '11.5px', textTransform: 'uppercase', marginBottom: 2, opacity: 0.8 }}>
                         {alt.code || 'ALERT'}
                       </div>
                       {alt.message}
