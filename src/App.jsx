@@ -33,8 +33,8 @@ function App() {
   // Layout States
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
-  const [theme, setTheme] = useState('light');
-  const [fontSize, setFontSize] = useState('medium'); // 'small' | 'medium' | 'large'
+  const [theme, setTheme] = useState(() => localStorage.getItem('bluegrid_theme') || 'light');
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('bluegrid_fontSize') || 'small'); // Default to small
 
   // Real-time updates state
   const [isLive, setIsLive] = useState(true);
@@ -73,29 +73,46 @@ function App() {
   const [selectedServer, setSelectedServer] = useState(null);
   const [isServerModalOpen, setIsServerModalOpen] = useState(false);
 
-  // Widget Visibility Settings (Managed via Customizer Workspace)
-  const [widgets, setWidgets] = useState({
-    statsRow: true,
-    cpuTrend: true,
-    memoryTrend: true,
-    networkLoad: true,
-    serverTable: true,
-    alertFeed: true,
-    radialHealth: true
+  // Widget Visibility Settings (Managed via Customizer Workspace) - Load from Local Storage
+  const [widgets, setWidgets] = useState(() => {
+    const saved = localStorage.getItem('bluegrid_widgets');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // Fallback to default
+      }
+    }
+    return {
+      statsRow: true,
+      cpuTrend: true,
+      memoryTrend: true,
+      networkLoad: true,
+      serverTable: true,
+      alertFeed: true,
+      radialHealth: true
+    };
   });
   
   const [layoutColumns, setLayoutColumns] = useState('4'); // Stat cards per row (3 or 4)
   const [lastCheckTime, setLastCheckTime] = useState(() => new Date().toLocaleTimeString());
 
-  // Effect to toggle CSS themes
+  // Effect to toggle CSS themes & persist in Local Storage
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('bluegrid_theme', theme);
   }, [theme]);
 
-  // Effect to toggle font size settings
+  // Effect to toggle font size settings & persist in Local Storage
   useEffect(() => {
     document.documentElement.setAttribute('data-font-size', fontSize);
+    localStorage.setItem('bluegrid_fontSize', fontSize);
   }, [fontSize]);
+
+  // Effect to persist active widgets selection in Local Storage
+  useEffect(() => {
+    localStorage.setItem('bluegrid_widgets', JSON.stringify(widgets));
+  }, [widgets]);
 
   const fetchTelemetry = async () => {
     try {

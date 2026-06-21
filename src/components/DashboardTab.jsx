@@ -1,11 +1,10 @@
-import React from 'react';
 import {
   ActivityIcon,
   ServerIcon,
-  UsersIcon,
   CpuIcon,
   InfoIcon,
-  BellIcon
+  BellIcon,
+  DatabaseIcon
 } from './Icons';
 import { Card, Badge, Button, StatCard } from './UiKit';
 import { LineChart, BarChart, RadialProgress } from './SvgCharts';
@@ -33,37 +32,33 @@ export const DashboardTab = ({
           <StatCard 
             label="CPU Load Average"
             value={`${aggregateMetrics.currentCpu}%`}
-            icon={<ActivityIcon size={20} />}
-            trend={aggregateMetrics.currentCpu > 70 ? "High Usage" : "Stable Load"}
-            trendValue={aggregateMetrics.currentCpu > 70 ? "+4.2%" : "-1.5%"}
-            trendDirection={aggregateMetrics.currentCpu > 70 ? "up" : "down"}
+            icon={<CpuIcon size={20} />}
+            trend="System core utilization"
+            trendDirection="neutral"
             className="col-3 glow-card"
           />
           <StatCard 
             label="Active RAM Pool"
             value={`${aggregateMetrics.currentMem}%`}
             icon={<ServerIcon size={20} />}
-            trend="Steady allocation"
-            trendValue="+0.4%"
+            trend="Active memory allocation"
             trendDirection="neutral"
             className="col-3 glow-card"
           />
           <StatCard 
             label="Storage Volume (Disk)"
             value={`${aggregateMetrics.currentDisk}%`}
-            icon={<ServerIcon size={20} />}
-            trend="Volume usage rate"
-            trendValue="Nominal"
+            icon={<DatabaseIcon size={20} />}
+            trend="Filesystem volume capacity"
             trendDirection="neutral"
             className="col-3 glow-card"
           />
           <StatCard 
             label="Network Throughput"
             value={aggregateMetrics.currentNet}
-            icon={<UsersIcon size={20} />}
-            trend="Ingress Traffic"
-            trendValue="Active"
-            trendDirection="up"
+            icon={<ActivityIcon size={20} />}
+            trend="Interface I/O data rate"
+            trendDirection="neutral"
             className="col-3 glow-card"
           />
         </div>
@@ -75,13 +70,8 @@ export const DashboardTab = ({
         {widgets.cpuTrend && (
           <Card 
             title="System Processor Load (CPU)" 
-            subtitle="Real-time telemetry metric aggregate"
+            subtitle="Real-time telemetry metric aggregate (%)"
             className={widgets.radialHealth ? "col-8 glow-card" : "col-12 glow-card"}
-            actions={
-              <Badge variant={aggregateMetrics.currentCpu > 70 ? 'danger' : 'success'}>
-                {aggregateMetrics.currentCpu > 70 ? 'LOAD STRESSED' : 'NOMINAL'}
-              </Badge>
-            }
           >
             <LineChart 
               data={historicalData.cpuData} 
@@ -95,7 +85,7 @@ export const DashboardTab = ({
         {widgets.radialHealth && (
           <Card 
             title="Aggregate Host Health" 
-            subtitle="Weighted VM and host operating metrics"
+            subtitle="Weighted host and component operating metrics"
             className={widgets.cpuTrend ? "col-4 glow-card" : "col-12 glow-card"}
           >
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '220px' }}>
@@ -118,7 +108,7 @@ export const DashboardTab = ({
         {widgets.memoryTrend && (
           <Card 
             title="Active Memory Commit (RAM)" 
-            subtitle="Memory allocation footprint"
+            subtitle="Memory allocation footprint (%)"
             className="col-6 glow-card"
           >
             <LineChart 
@@ -133,7 +123,7 @@ export const DashboardTab = ({
         {widgets.networkLoad && (
           <Card 
             title="Host Load Average Comparison" 
-            subtitle="Recent queue load metrics across host server nodes"
+            subtitle="Recent queue load metrics across host server nodes (Load Count)"
             className="col-6 glow-card"
             actions={
               <div style={{ display: 'flex', gap: '12px', fontSize: '12px', fontWeight: 600 }}>

@@ -145,9 +145,11 @@ export const StatCard = ({ label, value, icon, trend, trendValue, trendDirection
         <div className="stat-value">{value}</div>
         {trend && (
           <div className="stat-footer">
-            <span className={trendClass}>
-              {trendValue}
-            </span>
+            {trendValue && (
+              <span className={trendClass}>
+                {trendValue}
+              </span>
+            )}
             <span style={{ color: 'var(--text-muted)' }}>{trend}</span>
           </div>
         )}

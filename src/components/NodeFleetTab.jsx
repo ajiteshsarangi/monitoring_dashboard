@@ -24,33 +24,6 @@ export const NodeFleetTab = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Button variant="primary" onClick={() => {
-            const newId = `comp-${Date.now()}`;
-            const newName = `worker-service-${Math.floor(Math.random() * 900 + 100)}`;
-            const portsList = ['80', '8080', '5432', '6379', '9000', '22'];
-            const types = ['APP SERVER 1', 'APP SERVER 2', 'ETL SERVER', 'WEB SERVER'];
-            setServers(prev => [
-              ...prev,
-              {
-                id: newId,
-                name: newName,
-                ports: portsList[Math.floor(Math.random() * portsList.length)],
-                cpu: 10,
-                ram: 15,
-                status: 'online',
-                type: types[Math.floor(Math.random() * types.length)],
-                server_name: types[Math.floor(Math.random() * types.length)],
-                host: '127.0.0.1'
-              }
-            ]);
-            // add alert
-            setAlerts(prev => [
-              { id: `alt-${Date.now()}`, message: `Provisioned new fleet component: ${newName}`, type: 'success', time: 'Just now', code: 'COMPONENT_PROVISIONED' },
-              ...prev
-            ]);
-          }}>
-            + Add Component Node
-          </Button>
         </div>
       }
     >

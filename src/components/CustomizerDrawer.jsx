@@ -88,22 +88,7 @@ export const CustomizerDrawer = ({
           />
         </div>
 
-        <div className="customizer-section">
-          <h5 className="customizer-section-title">Stream Configuration</h5>
-          <div className="customizer-option">
-            <span>Polling frequency</span>
-            <select 
-              className="form-control" 
-              value={updateFrequency} 
-              onChange={(e) => setUpdateFrequency(Number(e.target.value))}
-              style={{ width: 120 }}
-            >
-              <option value="1500">1.5 seconds</option>
-              <option value="3000">3.0 seconds</option>
-              <option value="5000">5.0 seconds</option>
-            </select>
-          </div>
-        </div>
+
 
         <div className="customizer-section">
           <h5 className="customizer-section-title">Accessibility Options</h5>
