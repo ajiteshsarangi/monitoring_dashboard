@@ -114,6 +114,37 @@ function App() {
     localStorage.setItem('bluegrid_widgets', JSON.stringify(widgets));
   }, [widgets]);
 
+  // Effect to keep the active inspect modal in sync with live telemetry data in real-time
+  useEffect(() => {
+    if (!selectedServer) return;
+    const isComp = selectedServer.component_id || String(selectedServer.id).startsWith('comp');
+    if (isComp) {
+      const fresh = servers.find(s => s.id === selectedServer.id);
+      if (fresh) {
+        const hostServer = linuxServers.find(s => s.name === fresh.server_name || s.ip === fresh.host);
+        setSelectedServer({
+          ...hostServer,
+          ...fresh,
+          hostStatus: hostServer?.status,
+          hostRawStatus: hostServer?.rawStatus,
+          name: fresh.name,
+          id: fresh.id
+        });
+      }
+    } else {
+      const fresh = linuxServers.find(s => s.id === selectedServer.id);
+      if (fresh) {
+        setSelectedServer({
+          ...fresh,
+          hostStatus: fresh.status,
+          hostRawStatus: fresh.rawStatus,
+          name: fresh.name,
+          id: fresh.id
+        });
+      }
+    }
+  }, [servers, linuxServers]);
+
   const fetchTelemetry = async () => {
     try {
       const [healthRes, metricsRes, componentsRes, serversRes, alertsRes] = await Promise.all([
