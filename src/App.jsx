@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 
 // Import UI sub-components
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
-import { DashboardTab } from './components/DashboardTab';
+import { Sidebar } from './components/Sidebar/Sidebar';
+import { Header } from './components/Header/Header';
+import { DashboardTab } from './components/DashboardTab/DashboardTab';
 import { NodeFleetTab } from './components/NodeFleetTab';
-import { AlertLogsTab } from './components/AlertLogsTab';
-import { LinuxFleetTab } from './components/LinuxFleetTab';
-import { LogExplorerTab } from './components/LogExplorerTab';
-import { CustomizerDrawer } from './components/CustomizerDrawer';
-import { ServerInspectModal } from './components/ServerInspectModal';
+import { AlertLogsTab } from './components/AlertLogsTab/AlertLogsTab';
+import { LinuxFleetTab } from './components/LinuxFleetTab/LinuxFleetTab';
+import { LogExplorerTab } from './components/LogExplorerTab/LogExplorerTab';
+import { CustomizerDrawer } from './components/CustomizerDrawer/CustomizerDrawer';
+import { ServerInspectModal } from './components/ServerInspectModal/ServerInspectModal';
 import { getStatusConfig } from './utils/statusHelper';
 import apiClient from './utils/apiClient';
 

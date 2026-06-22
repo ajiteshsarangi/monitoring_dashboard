@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, Button, Badge } from './UiKit';
-import { getStatusConfig } from '../utils/statusHelper';
+import { Modal, Button, Badge } from '../UiKit';
+import { getStatusConfig } from '../../utils/statusHelper';
+import './ServerInspectModal.css';
 
 export const ServerInspectModal = ({
   isServerModalOpen,

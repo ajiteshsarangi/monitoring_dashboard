@@ -5,7 +5,8 @@ import {
   BellIcon,
   ActivityIcon,
   CpuIcon
-} from './Icons';
+} from '../Icons';
+import './Sidebar.css';
 
 export const Sidebar = ({
   activeTab,

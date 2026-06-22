@@ -1,4 +1,5 @@
 import React, { useState, useRef, useMemo } from 'react';
+import './SvgCharts.css';
 
 /**
  * Helper to compute grid guidelines & coordinate mappings

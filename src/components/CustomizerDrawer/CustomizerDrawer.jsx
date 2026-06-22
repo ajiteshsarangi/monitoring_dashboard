@@ -1,6 +1,7 @@
 import React from 'react';
-import { CloseIcon, SettingsIcon } from './Icons';
-import { Button, Toggle } from './UiKit';
+import { CloseIcon, SettingsIcon } from '../Icons';
+import { Button, Toggle } from '../UiKit';
+import './CustomizerDrawer.css';
 
 export const CustomizerDrawer = ({
   isCustomizerOpen,

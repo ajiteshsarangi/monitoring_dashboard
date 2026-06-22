@@ -1,0 +1,148 @@
+/* Interactive Terminal Shell Simulator */
+.terminal-shell {
+  background-color: #040712;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--border-radius-md);
+  padding: 16px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 12px;
+  height: 280px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+  overflow: hidden;
+}
+
+.terminal-header-pane {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.terminal-dot.red { background-color: #ef4444; }
+.terminal-dot.yellow { background-color: #f59e0b; }
+.terminal-dot.green { background-color: #10b981; }
+
+.terminal-output {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 8px;
+  padding-right: 4px;
+  scroll-behavior: smooth;
+}
+
+.terminal-line {
+  margin-bottom: 4px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+}
+
+.terminal-line.input {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+.terminal-line.output {
+  color: #cdd6f4;
+}
+
+.terminal-input-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 10px;
+}
+
+.terminal-prompt {
+  color: var(--accent-cyan);
+  font-weight: bold;
+}
+
+.terminal-select-cmd {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  transition: border-color var(--transition-fast);
+}
+
+.terminal-select-cmd:focus {
+  border-color: var(--accent-cyan);
+}
+
+/* Linux fleet specific grid utilities */
+.linux-card {
+  transition: transform var(--transition-normal), border-color var(--transition-normal), background-color var(--transition-normal);
+}
+
+.linux-card:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 16px rgba(var(--accent-cyan-rgb), 0.25), var(--shadow-lg);
+}
+
+.metric-bar-group {
+  margin-bottom: 12px;
+}
+
+.metric-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.metric-bar-wrapper {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-tertiary);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.metric-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease-out;
+}
+
+.os-badge-ubuntu {
+  background: rgba(224, 82, 31, 0.12);
+  color: #e0521f;
+  border: 1px solid rgba(224, 82, 31, 0.2);
+}
+
+.os-badge-rocky {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.os-badge-debian {
+  background: rgba(215, 7, 81, 0.12);
+  color: #d70751;
+  border: 1px solid rgba(215, 7, 81, 0.2);
+}

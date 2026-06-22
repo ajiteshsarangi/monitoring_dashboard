@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, Button, Badge } from './UiKit';
+import { Card, Button, Badge } from '../UiKit';
+import './AlertLogsTab.css';
 
 export const AlertLogsTab = ({
   alerts,

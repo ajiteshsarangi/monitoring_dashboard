@@ -1,0 +1,76 @@
+/* Custom Interactive SVG Chart Tooltip styles */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 220px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.chart-grid-line {
+  stroke: var(--chart-grid-line);
+  stroke-width: 1;
+}
+
+.chart-line {
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke-dasharray 1s ease-in-out;
+}
+
+.chart-area {
+  opacity: 0.15;
+  transition: opacity var(--transition-normal);
+}
+
+.chart-bar {
+  transition: fill var(--transition-fast), height 0.3s ease, y 0.3s ease;
+  cursor: pointer;
+}
+
+.chart-bar:hover {
+  fill: var(--accent-cyan) !important;
+}
+
+.chart-point {
+  stroke-width: 3;
+  cursor: pointer;
+  transition: r var(--transition-fast);
+}
+
+.chart-point:hover {
+  r: 8;
+}
+
+.chart-tooltip {
+  position: absolute;
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-primary);
+  font-size: 12px;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+  transition: opacity 0.1s ease, transform 0.1s ease;
+  transform: translate(-50%, -100%);
+  margin-top: -12px;
+}
+
+.chart-tooltip-title {
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 2px;
+}
+
+.chart-tooltip-value {
+  font-weight: 700;
+  color: var(--accent-blue);
+}

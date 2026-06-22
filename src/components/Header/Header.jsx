@@ -6,8 +6,9 @@ import {
   LightModeIcon,
   DarkModeIcon,
   SettingsIcon
-} from './Icons';
-import { Button } from './UiKit';
+} from '../Icons';
+import { Button } from '../UiKit';
+import './Header.css';
 
 export const Header = ({
   isSidebarCollapsed,

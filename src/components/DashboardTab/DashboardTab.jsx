@@ -5,10 +5,11 @@ import {
   InfoIcon,
   BellIcon,
   DatabaseIcon
-} from './Icons';
-import { Card, Badge, Button, StatCard } from './UiKit';
-import { LineChart, BarChart, RadialProgress } from './SvgCharts';
-import { getStatusConfig } from '../utils/statusHelper';
+} from '../Icons';
+import { Card, Badge, Button, StatCard } from '../UiKit';
+import { LineChart, BarChart, RadialProgress } from '../SvgCharts/SvgCharts';
+import { getStatusConfig } from '../../utils/statusHelper';
+import './DashboardTab.css';
 
 export const DashboardTab = ({
   widgets,

@@ -1,7 +1,8 @@
 import React from 'react';
-import { Badge, Button } from './UiKit';
-import { executeLinuxCommand } from '../mockData';
-import { getStatusConfig } from '../utils/statusHelper';
+import { Badge, Button } from '../UiKit';
+import { executeLinuxCommand } from '../../mockData';
+import { getStatusConfig } from '../../utils/statusHelper';
+import './LinuxFleetTab.css';
 
 const formatBytes = (bytes) => {
   if (!bytes) return '0.00 GB';
