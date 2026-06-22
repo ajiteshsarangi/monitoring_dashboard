@@ -1,4 +1,4 @@
-# BlueGrid Enterprise Monitoring Dashboard
+# Aetheris Enterprise Monitoring Dashboard
 
 A premium, modern enterprise monitoring dashboard built with React and Vite. It provides real-time telemetry visualizations, system logs analysis, custom interactive SVG charts, and a terminal command simulator for managed Linux fleet nodes.
 

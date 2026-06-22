@@ -34,8 +34,8 @@ function App() {
   // Layout States
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isCustomizerOpen, setIsCustomizerOpen] = useState(false);
-  const [theme, setTheme] = useState(() => localStorage.getItem('bluegrid_theme') || 'light');
-  const [fontSize, setFontSize] = useState(() => localStorage.getItem('bluegrid_fontSize') || 'small'); // Default to small
+  const [theme, setTheme] = useState(() => localStorage.getItem('aetheris_theme') || 'light');
+  const [fontSize, setFontSize] = useState(() => localStorage.getItem('aetheris_fontSize') || 'small'); // Default to small
 
   // Real-time updates state
   const [isLive, setIsLive] = useState(true);
@@ -76,7 +76,7 @@ function App() {
 
   // Widget Visibility Settings (Managed via Customizer Workspace) - Load from Local Storage
   const [widgets, setWidgets] = useState(() => {
-    const saved = localStorage.getItem('bluegrid_widgets');
+    const saved = localStorage.getItem('aetheris_widgets');
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -101,18 +101,18 @@ function App() {
   // Effect to toggle CSS themes & persist in Local Storage
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('bluegrid_theme', theme);
+    localStorage.setItem('aetheris_theme', theme);
   }, [theme]);
 
   // Effect to toggle font size settings & persist in Local Storage
   useEffect(() => {
     document.documentElement.setAttribute('data-font-size', fontSize);
-    localStorage.setItem('bluegrid_fontSize', fontSize);
+    localStorage.setItem('aetheris_fontSize', fontSize);
   }, [fontSize]);
 
   // Effect to persist active widgets selection in Local Storage
   useEffect(() => {
-    localStorage.setItem('bluegrid_widgets', JSON.stringify(widgets));
+    localStorage.setItem('aetheris_widgets', JSON.stringify(widgets));
   }, [widgets]);
 
   // Effect to keep the active inspect modal in sync with live telemetry data in real-time

@@ -20,8 +20,8 @@ export const Sidebar = ({
   return (
     <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-brand">
-        <div className="brand-icon">BG</div>
-        <span className="brand-name">BlueGrid Monitor</span>
+        <div className="brand-icon">AE</div>
+        <span className="brand-name">Aetheris Monitor</span>
       </div>
       
       <ul className="sidebar-nav">
