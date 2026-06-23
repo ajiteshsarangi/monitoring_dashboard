@@ -60,12 +60,45 @@ function App() {
   });
 
   // Log Explorer States
-  const [logs, setLogs] = useState(initialLogs);
-  const [selectedLogServer, setSelectedLogServer] = useState('all');
-  const [selectedLogService, setSelectedLogService] = useState('all');
-  const [selectedLogLevel, setSelectedLogLevel] = useState('all');
-  const [logSearchKeyword, setLogSearchKeyword] = useState('');
+  const [logs, setLogs] = useState([]);
+  const [selectedLogServer, setSelectedLogServer] = useState('');
+  const [selectedLogService, setSelectedLogService] = useState('');
+  const [selectedLogLevel, setSelectedLogLevel] = useState('WARN');
+  const [availableSeverities, setAvailableSeverities] = useState(['INFO', 'WARN', 'DEBUG', 'ERROR']);
+  const [logLines, setLogLines] = useState(100);
   const [isAutoScrollEnabled, setIsAutoScrollEnabled] = useState(true);
+
+  // Keep selected log level in sync with available severities when they change
+  useEffect(() => {
+    if (availableSeverities && availableSeverities.length > 0) {
+      const isCurrentValid = availableSeverities.includes(selectedLogLevel);
+      if (!isCurrentValid) {
+        setSelectedLogLevel(availableSeverities[0]);
+      }
+    }
+  }, [availableSeverities, selectedLogLevel]);
+
+  // Initialize default selections for logs when servers (components) data is loaded
+  useEffect(() => {
+    if (servers.length > 0) {
+      const uniqueServers = Array.from(new Set(servers.map(s => s.server_name || s.host || 'Unknown')));
+      if (uniqueServers.length > 0 && !selectedLogServer) {
+        setSelectedLogServer(uniqueServers[0]);
+      }
+    }
+  }, [servers, selectedLogServer]);
+
+  useEffect(() => {
+    if (selectedLogServer && servers.length > 0) {
+      const matchingServices = servers.filter(s => (s.server_name || s.host || 'Unknown') === selectedLogServer);
+      if (matchingServices.length > 0) {
+        const currentValid = matchingServices.find(s => s.id === selectedLogService);
+        if (!currentValid) {
+          setSelectedLogService(matchingServices[0].id);
+        }
+      }
+    }
+  }, [selectedLogServer, servers, selectedLogService]);
 
   const linuxServersRef = useRef(linuxServers);
   linuxServersRef.current = linuxServers;
@@ -286,6 +319,40 @@ function App() {
     }
   };
 
+  const fetchLogs = async () => {
+    if (!selectedLogServer || !selectedLogService) return;
+    const selectedComponent = servers.find(s => s.id === selectedLogService);
+    if (!selectedComponent) return;
+
+    try {
+      const res = await apiClient.get('/logs', {
+        params: {
+          component_id: selectedComponent.component_id || selectedComponent.id,
+          server: selectedComponent.server_name,
+          component: selectedComponent.component_name || selectedComponent.name,
+          lines: logLines,
+          severity: selectedLogLevel
+        }
+      });
+      if (res.data) {
+        if (res.data.logs) {
+          setLogs(res.data.logs);
+        }
+        if (res.data.available_severities) {
+          setAvailableSeverities(res.data.available_severities);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch logs from API", err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'logs') {
+      fetchLogs();
+    }
+  }, [activeTab, selectedLogServer, selectedLogService, selectedLogLevel, logLines]);
+
   // Live polling interval
   useEffect(() => {
     fetchTelemetry();
@@ -293,18 +360,16 @@ function App() {
     if (isLive) {
       intervalId = setInterval(() => {
         fetchTelemetry();
-        // Generate a simulated log line to keep log explorer functional
-        setLogs(prev => {
-          const newLine = generateNewLogLine(linuxServersRef.current);
-          return [...prev.slice(-99), newLine];
-        });
+        if (activeTab === 'logs') {
+          fetchLogs();
+        }
       }, updateFrequency);
     }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
-  }, [isLive, updateFrequency]);
+  }, [isLive, updateFrequency, activeTab, selectedLogServer, selectedLogService, selectedLogLevel, logLines]);
 
   // Compute stats
   const aggregateMetrics = React.useMemo(() => {
@@ -525,16 +590,19 @@ function App() {
             <LogExplorerTab
               logs={logs}
               setLogs={setLogs}
+              servers={servers}
               selectedLogServer={selectedLogServer}
               setSelectedLogServer={setSelectedLogServer}
               selectedLogService={selectedLogService}
               setSelectedLogService={setSelectedLogService}
               selectedLogLevel={selectedLogLevel}
               setSelectedLogLevel={setSelectedLogLevel}
-              logSearchKeyword={logSearchKeyword}
-              setLogSearchKeyword={setLogSearchKeyword}
+              availableSeverities={availableSeverities}
+              logLines={logLines}
+              setLogLines={setLogLines}
               isAutoScrollEnabled={isAutoScrollEnabled}
               setIsAutoScrollEnabled={setIsAutoScrollEnabled}
+              onFetchLogs={fetchLogs}
             />
           )}
 

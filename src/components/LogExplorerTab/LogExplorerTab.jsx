@@ -5,17 +5,25 @@ import './LogExplorerTab.css';
 export const LogExplorerTab = ({
   logs,
   setLogs,
+  servers = [],
   selectedLogServer,
   setSelectedLogServer,
   selectedLogService,
   setSelectedLogService,
   selectedLogLevel,
   setSelectedLogLevel,
-  logSearchKeyword,
-  setLogSearchKeyword,
+  availableSeverities = ['INFO', 'WARN', 'DEBUG', 'ERROR'],
+  logLines,
+  setLogLines,
   isAutoScrollEnabled,
-  setIsAutoScrollEnabled
+  setIsAutoScrollEnabled,
+  onFetchLogs
 }) => {
+  // Get unique servers dynamically from components list
+  const uniqueServers = Array.from(new Set(servers.map(s => s.server_name || s.host || 'Unknown'))).filter(Boolean);
+
+  // Get matching services/components for the selected server
+  const matchingServices = servers.filter(s => (s.server_name || s.host || 'Unknown') === selectedLogServer);
   return (
     <Card 
       title="Application Log Telemetry Stream" 
@@ -83,7 +91,7 @@ export const LogExplorerTab = ({
     >
       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
         {/* Filters Row */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.5fr', gap: '16px', backgroundColor: 'var(--bg-tertiary)', padding: '16px', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px', backgroundColor: 'var(--bg-tertiary)', padding: '16px', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)' }}>
           <div>
             <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Filter Server Node</label>
             <select 
@@ -92,11 +100,9 @@ export const LogExplorerTab = ({
               value={selectedLogServer}
               onChange={(e) => setSelectedLogServer(e.target.value)}
             >
-              <option value="all">All Servers</option>
-              <option value="srv-prod-app-01">srv-prod-app-01 (App)</option>
-              <option value="srv-prod-app-02">srv-prod-app-02 (App)</option>
-              <option value="srv-prod-db-01">srv-prod-db-01 (Database)</option>
-              <option value="srv-stage-cache-01">srv-stage-cache-01 (Cache)</option>
+              {uniqueServers.map(srv => (
+                <option key={srv} value={srv}>{srv}</option>
+              ))}
             </select>
           </div>
 
@@ -108,12 +114,9 @@ export const LogExplorerTab = ({
               value={selectedLogService}
               onChange={(e) => setSelectedLogService(e.target.value)}
             >
-              <option value="all">All Components</option>
-              <option value="nginx">nginx (Web Server)</option>
-              <option value="nodejs-app">nodejs-app (API Gateway)</option>
-              <option value="postgresql">postgresql (Database)</option>
-              <option value="redis">redis (Cache Grid)</option>
-              <option value="node-exporter">node-exporter (Metrics)</option>
+              {matchingServices.map(svc => (
+                <option key={svc.id} value={svc.id}>{svc.name}</option>
+              ))}
             </select>
           </div>
 
@@ -125,23 +128,26 @@ export const LogExplorerTab = ({
               value={selectedLogLevel}
               onChange={(e) => setSelectedLogLevel(e.target.value)}
             >
-              <option value="all">All Levels</option>
-              <option value="INFO">INFO</option>
-              <option value="WARN">WARNING</option>
-              <option value="ERROR">ERROR</option>
-              <option value="CRIT">CRITICAL</option>
+              {availableSeverities.map(lvl => (
+                <option key={lvl} value={lvl}>{lvl}</option>
+              ))}
             </select>
           </div>
 
           <div>
-            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Search logs by keyword</label>
+            <label style={{ fontSize: '11.5px', color: 'var(--text-secondary)', display: 'block', marginBottom: '6px', fontWeight: 600, textTransform: 'uppercase' }}>Lines to Retrieve</label>
             <input 
-              type="text" 
-              placeholder="Type keyword (e.g. timeout, connection, cache)..."
+              type="number" 
+              min="1"
+              max="500"
+              placeholder="100"
               className="form-control"
               style={{ width: '100%', fontSize: '13.5px' }}
-              value={logSearchKeyword}
-              onChange={(e) => setLogSearchKeyword(e.target.value)}
+              value={logLines}
+              onChange={(e) => {
+                const val = parseInt(e.target.value, 10);
+                setLogLines(isNaN(val) ? '' : Math.min(Math.max(val, 1), 500));
+              }}
             />
           </div>
         </div>
@@ -175,19 +181,6 @@ export const LogExplorerTab = ({
             }
           }}>
             {logs
-              .filter(log => {
-                if (typeof log === 'string') {
-                  if (logSearchKeyword && !log.toLowerCase().includes(logSearchKeyword.toLowerCase())) return false;
-                  return true;
-                }
-                if (log.isStackTrace) return true;
-
-                if (selectedLogServer !== 'all' && log.server !== selectedLogServer) return false;
-                if (selectedLogService !== 'all' && log.service !== selectedLogService) return false;
-                if (selectedLogLevel !== 'all' && log.level !== selectedLogLevel) return false;
-                if (logSearchKeyword && !log.message.toLowerCase().includes(logSearchKeyword.toLowerCase())) return false;
-                return true;
-              })
               .map((log, index) => {
                 if (typeof log === 'string') {
                   const isStack = log.trim().startsWith('at ') || log.trim().startsWith('Caused by:') || log.trim().startsWith('\t');
@@ -244,13 +237,7 @@ export const LogExplorerTab = ({
                   </div>
                 );
               })}
-            {logs.filter(log => {
-              if (selectedLogServer !== 'all' && log.server !== selectedLogServer) return false;
-              if (selectedLogService !== 'all' && log.service !== selectedLogService) return false;
-              if (selectedLogLevel !== 'all' && log.level !== selectedLogLevel) return false;
-              if (logSearchKeyword && !log.message.toLowerCase().includes(logSearchKeyword.toLowerCase())) return false;
-              return true;
-            }).length === 0 && (
+            {logs.length === 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-muted)' }}>
                 <div style={{ fontSize: '24px', marginBottom: '8px' }}>🔍</div>
                 <div>No logs match the current search filters.</div>
