@@ -30,7 +30,7 @@ export const LinuxFleetTab = ({
                   <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
  
                     <div>
-                      <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{server.name}</h3>
+                      <h3 style={{ fontSize: '17px', fontWeight: 600 }}>{server.name}</h3>
                       <span style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500 }}>IP: {server.ip} • Hostname: {server.hostname}</span>
                     </div>
                   </div>
@@ -42,21 +42,21 @@ export const LinuxFleetTab = ({
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px', borderTop: '1px solid var(--border-color)', borderBottom: '1px solid var(--border-color)', padding: '16px 0' }}>
                   <div>
                     <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>System Uptime</span>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>{server.uptime}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 4, color: 'var(--text-primary)' }}>{server.uptime}</div>
                   </div>
                   <div>
                     <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Unix Load Average</span>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>{server.loadAvg.join(', ')}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 4, color: 'var(--text-primary)' }}>{server.loadAvg.join(', ')}</div>
                   </div>
                   <div>
                     <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Network Interface</span>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 4, color: 'var(--text-primary)' }}>
                       {server.interfaces.name} (Rx: {formatBytes(server.network_interfaces?.[0]?.rx_bytes)} | Tx: {formatBytes(server.network_interfaces?.[0]?.tx_bytes)})
                     </div>
                   </div>
                   <div>
                     <span style={{ fontSize: '11.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>CPU Hardware</span>
-                    <div style={{ fontSize: '14px', fontWeight: 600, marginTop: 4, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{ fontSize: '14px', fontWeight: 500, marginTop: 4, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                       {server.cpuCores ? `${server.cpuCores} vCPUs` : 'N/A'} {server.architecture && `(${server.architecture})`}
                     </div>
                   </div>

@@ -37,7 +37,7 @@ export const AlertLogsTab = ({
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                  <span className="font-bold" style={{ fontSize: '13px', letterSpacing: '0.02em', textTransform: 'uppercase' }}>
+                  <span style={{ fontSize: '12.5px', fontWeight: 600, letterSpacing: '0.02em', textTransform: 'uppercase', color: 'var(--text-primary)' }}>
                     {alt.code}
                   </span>
                   <span style={{ fontSize: '11.5px', color: 'var(--text-muted)' }}>• {alt.time}</span>

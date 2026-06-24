@@ -33,7 +33,7 @@ export const NodeFleetTab = ({
             <div className="card glow-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <h4 style={{ fontSize: '16px', fontWeight: 600 }}>{srv.name}</h4>
+                  <h4 style={{ fontSize: '15px', fontWeight: 600 }}>{srv.name}</h4>
                   <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 500 }}>PID: {srv.process_id || 'N/A'}</span>
                 </div>
                 <Badge variant={getStatusConfig(srv.rawStatus || srv.status).variant}>
@@ -44,11 +44,11 @@ export const NodeFleetTab = ({
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Host Server:</span>
-                  <span className="font-semibold">{srv.type}</span>
+                  <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{srv.type}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: 'var(--text-secondary)' }}>Port:</span>
-                  <span className="font-semibold" style={{ fontFamily: 'monospace' }}>{srv.ports}</span>
+                  <span style={{ fontWeight: 500, fontFamily: 'monospace', color: 'var(--text-primary)' }}>{srv.ports}</span>
                 </div>
               </div>
 

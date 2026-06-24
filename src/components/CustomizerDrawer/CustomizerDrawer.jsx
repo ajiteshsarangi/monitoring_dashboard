@@ -17,7 +17,7 @@ export const CustomizerDrawer = ({
   return (
     <div className={`customizer-panel ${isCustomizerOpen ? 'open' : ''}`}>
       <div className="customizer-header">
-        <div style={{ fontWeight: 700, fontSize: 16 }}>Dashboard Workspace</div>
+        <div style={{ fontWeight: 600, fontSize: 16 }}>Dashboard Workspace</div>
         <button className="menu-toggle-btn" onClick={() => setIsCustomizerOpen(false)}>
           <CloseIcon size={18} />
         </button>
