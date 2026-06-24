@@ -319,7 +319,7 @@ h1, h2, h3, h4, h5, h6, p, span, th, td, a, label, svg, path {
   padding: 16px 20px;
   font-weight: 600;
   color: var(--text-secondary);
-  border-bottom: 2px solid var(--accent-blue);
+  border-bottom: 2px solid var(--border-color);
   background-color: var(--bg-secondary);
   position: sticky;
   top: 0;
