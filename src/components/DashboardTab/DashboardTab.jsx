@@ -246,7 +246,7 @@ export const DashboardTab = ({
                         const svcStatusCfg = getStatusConfig(svc.rawStatus || svc.status);
                         return (
                           <div key={sidx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14.5px' }}>
-                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{svc.name}</span>
+                            <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{svc.name}</span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', fontWeight: 600, color: svcStatusCfg.color }}>
                               <span style={{ 
                                 width: '6px', 

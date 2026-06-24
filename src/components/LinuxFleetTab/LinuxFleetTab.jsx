@@ -31,7 +31,7 @@ export const LinuxFleetTab = ({
  
                     <div>
                       <h3 style={{ fontSize: '18px', fontWeight: 700 }}>{server.name}</h3>
-                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>IP: {server.ip} • {server.hostname}</span>
+                      <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>IP: {server.ip} • Hostname: {server.hostname}</span>
                     </div>
                   </div>
                   <Badge variant={getStatusConfig(server.status).variant}>
