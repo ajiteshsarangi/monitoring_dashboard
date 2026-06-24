@@ -240,16 +240,13 @@ export const DashboardTab = ({
                   <div key={server.id} style={{ background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--border-radius-md)', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>
                       <span className="service-host-title">{server.name}</span>
-                      <Badge variant={srvStatusCfg.variant}>
-                        {srvStatusCfg.label}
-                      </Badge>
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', maxHeight: '280px', overflowY: 'auto', paddingRight: '4px' }}>
                       {(server.services || []).map((svc, sidx) => {
                         const svcStatusCfg = getStatusConfig(svc.rawStatus || svc.status);
                         return (
-                          <div key={sidx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13.5px' }}>
-                            <span style={{ fontFamily: 'monospace', color: 'var(--text-secondary)' }}>{svc.name}</span>
+                          <div key={sidx} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '14.5px' }}>
+                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>{svc.name}</span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', fontWeight: 600, color: svcStatusCfg.color }}>
                               <span style={{ 
                                 width: '6px', 

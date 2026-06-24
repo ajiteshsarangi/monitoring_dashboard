@@ -31,7 +31,7 @@ export const Header = ({
         </button>
         <div className="dashboard-title">
           {activeTab === 'dashboard' && 'NOC Dashboard Overview'}
-          {activeTab === 'nodes' && 'Node Fleet Manager'}
+          {activeTab === 'nodes' && 'Component Fleet Manager'}
           {activeTab === 'linux' && 'Linux Fleet Diagnostics'}
           {activeTab === 'logs' && 'Application Log Explorer'}
           {activeTab === 'alerts' && 'System Alert Feed Logs'}
@@ -42,8 +42,8 @@ export const Header = ({
         {/* Live Indicator Switch */}
         <div className="flex-row-center gap-16" style={{ marginRight: 8 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', marginRight: 4 }}>
-            <span style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Telemetry Sync</span>
-            <span style={{ fontSize: '12.5px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
+            <span style={{ fontSize: '12.5px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Telemetry Sync</span>
+            <span style={{ fontSize: '14.5px', fontWeight: 700, fontFamily: 'monospace', color: 'var(--text-secondary)' }}>
               Last Check: {lastCheckTime}
             </span>
           </div>
