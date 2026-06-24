@@ -13,15 +13,6 @@ import { ServerInspectModal } from './components/ServerInspectModal/ServerInspec
 import { getStatusConfig } from './utils/statusHelper';
 import apiClient from './utils/apiClient';
 
-// Import Mock Data
-import {
-  generateHistoricalMetrics,
-  initialServersList,
-  initialAlerts,
-  initialLinuxServers,
-  initialLogs,
-  generateNewLogLine
-} from './mockData';
 
 const mapComponentStatus = (statusStr) => {
   return getStatusConfig(statusStr).category;
@@ -42,7 +33,11 @@ function App() {
   const [updateFrequency, setUpdateFrequency] = useState(3000); // 3 seconds
 
   // Data States
-  const [historicalData, setHistoricalData] = useState(() => generateHistoricalMetrics(16));
+  const [historicalData, setHistoricalData] = useState({
+    cpuData: Array(16).fill(null).map(() => ({ label: '', value: 0 })),
+    memoryData: Array(16).fill(null).map(() => ({ label: '', value: 0 })),
+    networkData: Array(16).fill(null).map(() => ({ label: '', value: 0 }))
+  });
   const [servers, setServers] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
