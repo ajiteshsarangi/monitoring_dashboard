@@ -170,10 +170,10 @@ export const ServerInspectModal = ({
                 <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>OS & Kernel Info</span>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
-                    <div><span style={{ color: 'var(--text-secondary)' }}>OS:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.os || 'N/A'}</span></div>
-                    <div><span style={{ color: 'var(--text-secondary)' }}>Kernel:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.kernel || 'N/A'}</span></div>
-                    <div><span style={{ color: 'var(--text-secondary)' }}>Uptime:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.uptime || 'N/A'}</span></div>
-                    <div><span style={{ color: 'var(--text-secondary)' }}>IP Address:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.host || selectedServer.ip || 'N/A'}</span></div>
+                    <div><span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>OS:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.os || 'N/A'}</span></div>
+                    <div><span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Kernel:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.kernel || 'N/A'}</span></div>
+                    <div><span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Uptime:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.uptime || 'N/A'}</span></div>
+                    <div><span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>IP Address:</span> <span style={{ fontFamily: 'monospace', fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.host || selectedServer.ip || 'N/A'}</span></div>
                   </div>
                 </div>
 
@@ -181,22 +181,22 @@ export const ServerInspectModal = ({
                 <div style={{ background: 'var(--bg-secondary)', padding: '16px', borderRadius: 'var(--border-radius-md)', border: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <span style={{ fontSize: '13px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, borderBottom: '1px solid var(--border-color)', paddingBottom: '6px' }}>CPU Hardware</span>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
-                    <div><span style={{ color: 'var(--text-secondary)' }}>CPU Model:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.cpu_hardware?.model || selectedServer.cpuModel || 'N/A'}</span></div>
+                    <div><span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>CPU Model:</span> <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{selectedServer.cpu_hardware?.model || selectedServer.cpuModel || 'N/A'}</span></div>
                     <div>
-                      <span style={{ color: 'var(--text-secondary)' }}>Topology:</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Topology:</span>{' '}
                       <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
                         {selectedServer.cpu_hardware?.total_threads || selectedServer.cpuCores || 0} Threads 
                         {selectedServer.cpu_hardware?.sockets ? ` (${selectedServer.cpu_hardware.sockets} Sockets • ${selectedServer.cpu_hardware.cores_per_socket} Cores/Srv)` : ''}
                       </span>
                     </div>
                     <div>
-                      <span style={{ color: 'var(--text-secondary)' }}>Load Avg:</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Load Avg:</span>{' '}
                       <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>
                         {selectedServer.load_average ? `${selectedServer.load_average.one_minute}, ${selectedServer.load_average.five_minutes}, ${selectedServer.load_average.fifteen_minutes}` : 'N/A'}
                       </span>
                     </div>
                     <div>
-                      <span style={{ color: 'var(--text-secondary)' }}>Current Utilization:</span>{' '}
+                      <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Current Utilization:</span>{' '}
                       <span style={{ color: 'var(--accent-blue)', fontWeight: 600 }}>{selectedServer.cpuLoad || selectedServer.cpu || 0}%</span>
                     </div>
                   </div>
