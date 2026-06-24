@@ -40,7 +40,7 @@ export const ServerInspectModal = ({
     <Modal
       isOpen={isServerModalOpen}
       onClose={() => setIsServerModalOpen(false)}
-      title={selectedServer ? (isComponent ? `Inspect Component: ${selectedServer.name}` : `Diagnostics: ${selectedServer.hostname || selectedServer.name}`) : ''}
+      title={selectedServer ? (isComponent ? `Inspect Component: ${selectedServer.name}` : `Diagnostics: ${selectedServer.name}`) : ''}
       style={{ maxWidth: '680px', width: '95%' }}
       footer={
         <>
