@@ -49,7 +49,6 @@
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -2px rgba(0,0,0,0.3);
   
   --chart-grid-line: rgba(255, 255, 255, 0.05);
-  --table-header-bg: #1c253c;
 }
 
 /* Light Theme Variables */
@@ -83,7 +82,6 @@
   --danger-rgb: 185, 28, 28;
   --info: #0369a1;
   --info-rgb: 3, 105, 161;
-  --table-header-bg: #e5e7eb;
 }
 
 /* Reset and Global Styles */
@@ -322,7 +320,7 @@ h1, h2, h3, h4, h5, h6, p, span, th, td, a, label, svg, path {
   font-weight: 600;
   color: var(--text-secondary);
   border-bottom: 1px solid var(--border-color);
-  background-color: var(--table-header-bg);
+  background-color: var(--bg-secondary);
   position: sticky;
   top: 0;
   z-index: 10;
