@@ -313,7 +313,7 @@ export const DashboardTab = ({
                       const compStatusCfg = getStatusConfig(srv.rawStatus || srv.status);
                       return (
                         <tr key={srv.id}>
-                          <td className="font-semibold">{srv.name}</td>
+                          <td className="font-semibold" style={{ color: 'var(--text-primary)' }}>{srv.name}</td>
                           <td style={{ color: 'var(--text-secondary)' }}>{srv.type}</td>
                           <td style={{ color: 'var(--text-secondary)' }}>{srv.ports}</td>
                           <td>{srv.cpu}%</td>

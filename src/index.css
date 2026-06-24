@@ -331,7 +331,7 @@ h1, h2, h3, h4, h5, h6, p, span, th, td, a, label, svg, path {
 
 .table td {
   padding: 16px 20px;
-  color: var(--text-primary);
+  color: var(--text-secondary);
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
@@ -340,8 +340,12 @@ h1, h2, h3, h4, h5, h6, p, span, th, td, a, label, svg, path {
   transition: background-color var(--transition-fast);
 }
 
+.table tbody tr:nth-child(even) {
+  background-color: rgba(125, 125, 125, 0.02);
+}
+
 .table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.02);
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 /* Inputs & Form Controls */
