@@ -332,6 +332,7 @@ h1, h2, h3, h4, h5, h6, p, span, th, td, a, label, svg, path {
 .table td {
   padding: 16px 20px;
   color: var(--text-secondary);
+  font-weight: 500;
   border-bottom: 1px solid var(--border-color);
   vertical-align: middle;
 }
