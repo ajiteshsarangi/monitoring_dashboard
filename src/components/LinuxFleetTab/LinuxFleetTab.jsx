@@ -1,6 +1,5 @@
 import React from 'react';
 import { Badge, Button } from '../UiKit';
-import { executeLinuxCommand } from '../../mockData';
 import { getStatusConfig } from '../../utils/statusHelper';
 import './LinuxFleetTab.css';
 
